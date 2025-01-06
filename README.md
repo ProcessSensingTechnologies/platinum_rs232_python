@@ -22,14 +22,14 @@ This repository provides Python code for receiving data from the from a Dynament
 #### Clone this repository:
 
 ```bash
-git clone ADD REPO CLONE LINK
+git clone https://github.com/ProcessSensingTechnologies/platinum_rs232_python.git
 ```
 
 #### Install dependencies:
 
 *It is highly recommended to use a virtual environment to isolate your project's dependencies and avoid conflicts with other Python projects.*
 ```Bash
-cd RENAME SRC FOR PROJECT
+cd platinum_rs232_python
 
 python -m pip install -r requirements.txt
 ```
