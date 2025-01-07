@@ -1,6 +1,7 @@
 from serial import Serial
-from struct import unpack
-from platinum.utilities.helpers import VariableIdEnum, generate_read_frame
+from utilities.helpers import VariableIdEnum, generate_read_frame
+from binary_reader import BinaryReader
+from platinum_data_structures.live_data import LiveDataV4
 
 
 class StructureVersionException(Exception):
@@ -30,21 +31,27 @@ class PlatinumSingleGas(Serial):
 
     @property
     def live_data_version(self):
-        return self.read_live_data()["Version"]
+        """
+        Return the current version of the "Live Data" Structure
+
+        :return:
+        :rtype: float
+        """
+        return self.read_live_data().Version
 
     @property
     def status_flags(self):
-        return self.read_live_data()["StatusFlags"]
+        return self.read_live_data().StatusFlags
 
     @property
     def sensor_reading(self):
-        return self.read_live_data()["ReadingFloat"]
+        return self.read_live_data().Reading
 
     @property
     def sensor_temperature(self):
-        return self.read_live_data()["Temperature"]
+        return self.read_live_data().Temperature
 
-    def read_live_data(self) -> dict[str : str | int]:
+    def read_live_data(self) -> LiveDataV4:
         """
         Return all 'Live Data' fields from the sensor as a dictionary
 
@@ -67,21 +74,29 @@ class PlatinumSingleGas(Serial):
                 f"Invalid Structure Version: {data_bytes[0]}"
             )
 
-        data_struct = unpack("=HHffHHfLHHHH", data_bytes)
+        data_structure = LiveDataV4()
 
-        live_data = {
-            "Version": data_struct[0],
-            "StatusFlags": data_struct[1],
-            "ReadingFloat": round(data_struct[2], 4),
-            "Temperature": round(data_struct[3], 4),
-            "Det1": data_struct[4],
-            "Ref": data_struct[5],
-            "Fa": round(data_struct[6], 4),
-            "Uptime (s)": data_struct[7] / 100,
-            "DetMin": data_struct[8],
-            "DetMax": data_struct[9],
-            "RefMin": data_struct[10],
-            "RefMax": data_struct[11],
-        }
+        data_reader = BinaryReader(data_bytes)
 
-        return live_data
+        data_structure.Version = data_reader.read_uint16()
+        data_structure.StatusFlags = data_reader.read_uint16()
+        data_structure.Reading = data_reader.read_float()
+        data_structure.Temperature = data_reader.read_float()
+        data_structure.Det1 = data_reader.read_uint16()
+        data_structure.Ref = data_reader.read_uint16()
+        data_structure.Fa = data_reader.read_float()
+        data_structure.Uptime = data_reader.read_uint32()
+        data_structure.DetMin = data_reader.read_uint16()
+        data_structure.DetMax = data_reader.read_uint16()
+        data_structure.RefMin = data_reader.read_uint16()
+        data_structure.RefMax = data_reader.read_uint16()
+
+        return data_structure
+
+
+if __name__ == "__main__":
+    sensor = PlatinumSingleGas("COM8")
+
+    while True:
+        print(f"{sensor.sensor_reading = }")
+        print(f"{sensor.sensor_temperature = }")
