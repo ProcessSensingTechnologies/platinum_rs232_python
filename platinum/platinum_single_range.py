@@ -36,7 +36,7 @@ class PlatinumSingleGas(Serial):
         super().__init__(port_name, baudrate, timeout=1)
 
         try:
-            self.config_data = self._read_config_data()
+            self._config_data = self._read_config_data()
         except StructureVersionException as error:
             self.config_data = None
             print(error)
@@ -50,12 +50,29 @@ class PlatinumSingleGas(Serial):
             print("properties and methods using Live Data will not work")
 
     @property
-    def live_data(self):
+    def live_data(self) -> LiveData:
+        """
+        Return the live data from the sensor as an object with readable properties internally
+
+        :return: Live data object
+        :rtype: LiveData
+        """
         if self._live_data:
             return self._read_live_data()
 
     @property
-    def live_data_version(self):
+    def config_data(self) -> ConfigData:
+        """
+        Return the configuration data from the sensor as an object with readable properties internally
+
+        :return: Live data object
+        :rtype: LiveData
+        """
+        if self._config_data:
+            return self._config_data()
+
+    @property
+    def live_data_version(self) -> int:
         """
         Return the current version of the "Live Data" Structure
 
@@ -79,12 +96,12 @@ class PlatinumSingleGas(Serial):
             return data_bytes[0]
 
     @property
-    def config_data_version(self):
+    def config_data_version(self) -> int:
         """
         Return the current version of the "Config Data" Structure
 
         :return:
-        :rtype: float
+        :rtype: int
         """
         if self.config_data:
             return self.config_data.version
@@ -109,16 +126,7 @@ class PlatinumSingleGas(Serial):
         :return: Live Data dictionary
         :rtype: dict[str : str | int]
         """
-        frame = generate_read_frame(VariableIdEnum.LIVE_DATA)
-
-        self.write(frame)
-        self.flushOutput()
-        returned_data = self.read_until(b"")
-
-        if b"\x10\x10" in returned_data:
-            returned_data = returned_data.replace(b"\x10\x10", b"\x10")
-
-        data_bytes = returned_data[3:-4]
+        data_bytes = self.read_write_data(VariableIdEnum.LIVE_DATA)
 
         match data_bytes[0]:
             case 4:
@@ -137,16 +145,7 @@ class PlatinumSingleGas(Serial):
         :return: Config Data dictionary
         :rtype: dict[str : str | int | BaudRateStructure | ModeBitsStructure]
         """
-        frame = generate_read_frame(VariableIdEnum.CONFIG_DATA)
-
-        self.write(frame)
-        self.flushOutput()
-        returned_data = self.read_until(b"")
-
-        if b"\x10\x10" in returned_data:
-            returned_data = returned_data.replace(b"\x10\x10", b"\x10")
-
-        data_bytes = returned_data[3:-4]
+        data_bytes = self.read_write_data(VariableIdEnum.CONFIG_DATA)
 
         match data_bytes[0]:
             case 8:
@@ -157,3 +156,23 @@ class PlatinumSingleGas(Serial):
                 )
 
         return data_structure
+
+    def read_write_data(self, command: VariableIdEnum) -> bytes:
+        """
+        Adds and removes the required bounding commands and CRC around the desired commmand abd response.
+
+        :param command: Desired read command variable
+        :type command: VariableIdEnum
+        :return: byte string returned from the sensor
+        :rtype: bytes
+        """
+        frame = generate_read_frame(VariableIdEnum.CONFIG_DATA)
+
+        self.write(frame)
+        self.flushOutput()
+        returned_data = self.read_until(b"")
+
+        if b"\x10\x10" in returned_data:
+            returned_data = returned_data.replace(b"\x10\x10", b"\x10")
+
+        return returned_data[3:-4]

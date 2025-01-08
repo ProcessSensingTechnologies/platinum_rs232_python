@@ -29,3 +29,4 @@ def generate_write_frame(command: VariableIdEnum) -> bytearray:
     frame_bytearray = bytearray(frame)
 
     return generate_and_add_checksum(frame_bytearray)
+
