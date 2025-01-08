@@ -1,7 +1,13 @@
 from serial import Serial
-from utilities.helpers import VariableIdEnum, generate_read_frame
-from binary_reader import BinaryReader
-from platinum_data_structures.live_data import LiveDataV4
+from platinum.utilities.helpers import (
+    VariableIdEnum,
+    generate_read_frame,
+)
+from platinum.platinum_data_structures.live_data import LiveData, LiveDataV4
+from platinum.platinum_data_structures.configuration_data import (
+    ConfigData,
+    ConfigDataV8,
+)
 
 
 class StructureVersionException(Exception):
@@ -29,6 +35,25 @@ class PlatinumSingleGas(Serial):
         """
         super().__init__(port_name, baudrate, timeout=1)
 
+        try:
+            self.config_data = self._read_config_data()
+        except StructureVersionException as error:
+            self.config_data = None
+            print(error)
+            print("properties and methods using Configuration Data will not work")
+
+        try:
+            self._live_data = self._read_live_data()
+        except StructureVersionException as error:
+            self._live_data = None
+            print(error)
+            print("properties and methods using Live Data will not work")
+
+    @property
+    def live_data(self):
+        if self._live_data:
+            return self._read_live_data()
+
     @property
     def live_data_version(self):
         """
@@ -37,21 +62,47 @@ class PlatinumSingleGas(Serial):
         :return:
         :rtype: float
         """
-        return self.read_live_data().Version
+        if self._live_data:
+            return self.live_data.version
+        else:
+            frame = generate_read_frame(VariableIdEnum.LIVE_DATA)
+
+            self.write(frame)
+            self.flushOutput()
+            returned_data = self.read_until(b"")
+
+            if b"\x10\x10" in returned_data:
+                returned_data = returned_data.replace(b"\x10\x10", b"\x10")
+
+            data_bytes = returned_data[3:-4]
+
+            return data_bytes[0]
 
     @property
-    def status_flags(self):
-        return self.read_live_data().StatusFlags
+    def config_data_version(self):
+        """
+        Return the current version of the "Config Data" Structure
 
-    @property
-    def sensor_reading(self):
-        return self.read_live_data().Reading
+        :return:
+        :rtype: float
+        """
+        if self.config_data:
+            return self.config_data.version
+        else:
+            frame = generate_read_frame(VariableIdEnum.CONFIG_DATA)
 
-    @property
-    def sensor_temperature(self):
-        return self.read_live_data().Temperature
+            self.write(frame)
+            self.flushOutput()
+            returned_data = self.read_until(b"")
 
-    def read_live_data(self) -> LiveDataV4:
+            if b"\x10\x10" in returned_data:
+                returned_data = returned_data.replace(b"\x10\x10", b"\x10")
+
+            data_bytes = returned_data[3:-4]
+
+            return data_bytes[0]
+
+    def _read_live_data(self) -> LiveData:
         """
         Return all 'Live Data' fields from the sensor as a dictionary
 
@@ -69,34 +120,40 @@ class PlatinumSingleGas(Serial):
 
         data_bytes = returned_data[3:-4]
 
-        if data_bytes[0] != 4:
-            raise StructureVersionException(
-                f"Invalid Structure Version: {data_bytes[0]}"
-            )
-
-        data_structure = LiveDataV4()
-
-        data_reader = BinaryReader(data_bytes)
-
-        data_structure.Version = data_reader.read_uint16()
-        data_structure.StatusFlags = data_reader.read_uint16()
-        data_structure.Reading = data_reader.read_float()
-        data_structure.Temperature = data_reader.read_float()
-        data_structure.Det1 = data_reader.read_uint16()
-        data_structure.Ref = data_reader.read_uint16()
-        data_structure.Fa = data_reader.read_float()
-        data_structure.Uptime = data_reader.read_uint32()
-        data_structure.DetMin = data_reader.read_uint16()
-        data_structure.DetMax = data_reader.read_uint16()
-        data_structure.RefMin = data_reader.read_uint16()
-        data_structure.RefMax = data_reader.read_uint16()
+        match data_bytes[0]:
+            case 4:
+                data_structure = LiveDataV4(data_bytes)
+            case _:
+                raise StructureVersionException(
+                    f"Invalid Live Data Structure Version: {data_bytes[0]}"
+                )
 
         return data_structure
 
+    def _read_config_data(self) -> ConfigData:
+        """
+        Return all 'Confguration Data' fields from the sensor as a dictionary
 
-if __name__ == "__main__":
-    sensor = PlatinumSingleGas("COM8")
+        :return: Config Data dictionary
+        :rtype: dict[str : str | int | BaudRateStructure | ModeBitsStructure]
+        """
+        frame = generate_read_frame(VariableIdEnum.CONFIG_DATA)
 
-    while True:
-        print(f"{sensor.sensor_reading = }")
-        print(f"{sensor.sensor_temperature = }")
+        self.write(frame)
+        self.flushOutput()
+        returned_data = self.read_until(b"")
+
+        if b"\x10\x10" in returned_data:
+            returned_data = returned_data.replace(b"\x10\x10", b"\x10")
+
+        data_bytes = returned_data[3:-4]
+
+        match data_bytes[0]:
+            case 8:
+                data_structure = ConfigDataV8(data_bytes)
+            case _:
+                raise StructureVersionException(
+                    f"Invalid Config Structure Version: {data_bytes[0]}"
+                )
+
+        return data_structure

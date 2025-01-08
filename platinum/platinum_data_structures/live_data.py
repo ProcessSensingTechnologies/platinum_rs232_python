@@ -1,17 +1,23 @@
-from dataclasses import dataclass
+from binary_reader import BinaryReader
 
 
-@dataclass
-class LiveDataV4:
-    Version: int = 0
-    StatusFlags: int = 0
-    Reading: float = 0
-    Temperature: float = 0
-    Det1: int = 0
-    Ref: int = 0
-    Fa: float = 0
-    Uptime: int = 0
-    DetMin: int = 0
-    DetMax: int = 0
-    RefMin: int = 0
-    RefMax: int = 0
+class LiveData:
+    pass
+
+
+class LiveDataV4(LiveData):
+    def __init__(self, data_stream: str):
+        data_reader = BinaryReader(data_stream)
+
+        self.version = data_reader.read_uint16()
+        self.status_flags = data_reader.read_uint16()
+        self.reading = data_reader.read_float()
+        self.temperature = data_reader.read_float()
+        self.det_1 = data_reader.read_uint16()
+        self.ref = data_reader.read_uint16()
+        self.fa = data_reader.read_float()
+        self.uptime = data_reader.read_uint32()
+        self.det_min = data_reader.read_uint16()
+        self.det_max = data_reader.read_uint16()
+        self.ref_min = data_reader.read_uint16()
+        self.ref_max = data_reader.read_uint16()

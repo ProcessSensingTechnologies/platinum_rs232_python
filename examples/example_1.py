@@ -1,10 +1,9 @@
 from platinum.platinum_single_range import PlatinumSingleGas
-from time import sleep
 
 if __name__ == "__main__":
     sensor = PlatinumSingleGas("COM8")
+    print(f"{sensor.config_data.sensor_type = }")
+    print(f"{sensor.live_data_version = }")
 
     while True:
-        print(f"{sensor.sensor_reading = }")
-        print(f"{sensor.sensor_temperature = }")
-        sleep(1)
+        print(f"{sensor.live_data.reading = }")
