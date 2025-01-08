@@ -69,7 +69,7 @@ class PlatinumSingleGas(Serial):
         :rtype: LiveData
         """
         if self._config_data:
-            return self._config_data()
+            return self._config_data
 
     @property
     def live_data_version(self) -> int:
@@ -166,7 +166,7 @@ class PlatinumSingleGas(Serial):
         :return: byte string returned from the sensor
         :rtype: bytes
         """
-        frame = generate_read_frame(VariableIdEnum.CONFIG_DATA)
+        frame = generate_read_frame(command)
 
         self.write(frame)
         self.flushOutput()
