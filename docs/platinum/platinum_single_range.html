@@ -158,7 +158,7 @@
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        :rtype: LiveData</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span><span class="p">:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span><span class="p">()</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="nd">@property</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">live_data_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -255,7 +255,7 @@
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        :return: byte string returned from the sensor</span>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        :rtype: bytes</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">frame</span> <span class="o">=</span> <span class="n">generate_read_frame</span><span class="p">(</span><span class="n">VariableIdEnum</span><span class="o">.</span><span class="n">CONFIG_DATA</span><span class="p">)</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">frame</span> <span class="o">=</span> <span class="n">generate_read_frame</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 </span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
 </span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">flushOutput</span><span class="p">()</span>
@@ -386,7 +386,7 @@
 </span><span id="PlatinumSingleGas-70"><a href="#PlatinumSingleGas-70"><span class="linenos"> 70</span></a><span class="sd">        :rtype: LiveData</span>
 </span><span id="PlatinumSingleGas-71"><a href="#PlatinumSingleGas-71"><span class="linenos"> 71</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="PlatinumSingleGas-72"><a href="#PlatinumSingleGas-72"><span class="linenos"> 72</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span><span class="p">:</span>
-</span><span id="PlatinumSingleGas-73"><a href="#PlatinumSingleGas-73"><span class="linenos"> 73</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span><span class="p">()</span>
+</span><span id="PlatinumSingleGas-73"><a href="#PlatinumSingleGas-73"><span class="linenos"> 73</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span>
 </span><span id="PlatinumSingleGas-74"><a href="#PlatinumSingleGas-74"><span class="linenos"> 74</span></a>
 </span><span id="PlatinumSingleGas-75"><a href="#PlatinumSingleGas-75"><span class="linenos"> 75</span></a>    <span class="nd">@property</span>
 </span><span id="PlatinumSingleGas-76"><a href="#PlatinumSingleGas-76"><span class="linenos"> 76</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">live_data_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -483,7 +483,7 @@
 </span><span id="PlatinumSingleGas-167"><a href="#PlatinumSingleGas-167"><span class="linenos">167</span></a><span class="sd">        :return: byte string returned from the sensor</span>
 </span><span id="PlatinumSingleGas-168"><a href="#PlatinumSingleGas-168"><span class="linenos">168</span></a><span class="sd">        :rtype: bytes</span>
 </span><span id="PlatinumSingleGas-169"><a href="#PlatinumSingleGas-169"><span class="linenos">169</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PlatinumSingleGas-170"><a href="#PlatinumSingleGas-170"><span class="linenos">170</span></a>        <span class="n">frame</span> <span class="o">=</span> <span class="n">generate_read_frame</span><span class="p">(</span><span class="n">VariableIdEnum</span><span class="o">.</span><span class="n">CONFIG_DATA</span><span class="p">)</span>
+</span><span id="PlatinumSingleGas-170"><a href="#PlatinumSingleGas-170"><span class="linenos">170</span></a>        <span class="n">frame</span> <span class="o">=</span> <span class="n">generate_read_frame</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 </span><span id="PlatinumSingleGas-171"><a href="#PlatinumSingleGas-171"><span class="linenos">171</span></a>
 </span><span id="PlatinumSingleGas-172"><a href="#PlatinumSingleGas-172"><span class="linenos">172</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 </span><span id="PlatinumSingleGas-173"><a href="#PlatinumSingleGas-173"><span class="linenos">173</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">flushOutput</span><span class="p">()</span>
@@ -608,7 +608,7 @@
 </span><span id="PlatinumSingleGas.config_data-70"><a href="#PlatinumSingleGas.config_data-70"><span class="linenos">70</span></a><span class="sd">        :rtype: LiveData</span>
 </span><span id="PlatinumSingleGas.config_data-71"><a href="#PlatinumSingleGas.config_data-71"><span class="linenos">71</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="PlatinumSingleGas.config_data-72"><a href="#PlatinumSingleGas.config_data-72"><span class="linenos">72</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span><span class="p">:</span>
-</span><span id="PlatinumSingleGas.config_data-73"><a href="#PlatinumSingleGas.config_data-73"><span class="linenos">73</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span><span class="p">()</span>
+</span><span id="PlatinumSingleGas.config_data-73"><a href="#PlatinumSingleGas.config_data-73"><span class="linenos">73</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_data</span>
 </span></pre></div>
 
 
@@ -735,7 +735,7 @@
 </span><span id="PlatinumSingleGas.read_write_data-167"><a href="#PlatinumSingleGas.read_write_data-167"><span class="linenos">167</span></a><span class="sd">        :return: byte string returned from the sensor</span>
 </span><span id="PlatinumSingleGas.read_write_data-168"><a href="#PlatinumSingleGas.read_write_data-168"><span class="linenos">168</span></a><span class="sd">        :rtype: bytes</span>
 </span><span id="PlatinumSingleGas.read_write_data-169"><a href="#PlatinumSingleGas.read_write_data-169"><span class="linenos">169</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PlatinumSingleGas.read_write_data-170"><a href="#PlatinumSingleGas.read_write_data-170"><span class="linenos">170</span></a>        <span class="n">frame</span> <span class="o">=</span> <span class="n">generate_read_frame</span><span class="p">(</span><span class="n">VariableIdEnum</span><span class="o">.</span><span class="n">CONFIG_DATA</span><span class="p">)</span>
+</span><span id="PlatinumSingleGas.read_write_data-170"><a href="#PlatinumSingleGas.read_write_data-170"><span class="linenos">170</span></a>        <span class="n">frame</span> <span class="o">=</span> <span class="n">generate_read_frame</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 </span><span id="PlatinumSingleGas.read_write_data-171"><a href="#PlatinumSingleGas.read_write_data-171"><span class="linenos">171</span></a>
 </span><span id="PlatinumSingleGas.read_write_data-172"><a href="#PlatinumSingleGas.read_write_data-172"><span class="linenos">172</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 </span><span id="PlatinumSingleGas.read_write_data-173"><a href="#PlatinumSingleGas.read_write_data-173"><span class="linenos">173</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">flushOutput</span><span class="p">()</span>
